@@ -38,7 +38,7 @@ No logo provided; render "NELITOMORPHISM" or "NELI" in Geist Mono 600, tracked w
 
 ## Index
 - `styles.css` → imports `tokens/` (colors, typography, spacing, motion, effects, fonts, base).
-- `components/` — core/ (Button, Card, Badge) · forms/ (Input, Select, Checkbox, Switch, Slider, DatePicker, FileUpload) · overlay/ (Dialog, Toast, Tooltip, CommandPalette) · data/ (Table, Chart, Progress, Resolve) · navigation/ (Sidebar, Topbar, Tabs) · `webgl-material.js` (shader helper).
+- `components/` — core/ (Button, Card, Badge, Kbd, SectionLabel) · forms/ (Input, Select, Checkbox, Switch, Slider, DatePicker, FileUpload) · overlay/ (Dialog, Toast, Tooltip, CommandPalette) · data/ (Table, Chart, Progress, Resolve, Stat, Timeline) · navigation/ (Sidebar, Topbar, Tabs) · `webgl-material.js` (shader helper).
 - `guidelines/` — foundation specimen cards.
 - `ui_kits/dashboard/` — analytics dashboard showcase.
 - `SKILL.md` — agent skill entry point.

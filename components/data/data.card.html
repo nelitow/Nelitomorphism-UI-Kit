@@ -1,4 +1,4 @@
-<!-- @dsCard group="Components" viewport="700x560" subtitle="Resolve loader · Chart morph · Table · Progress" name="Data" -->
+<!-- @dsCard group="Components" viewport="700x920" subtitle="Resolve loader · Stat · Chart · Timeline · Table · Progress" name="Data" -->
 <!DOCTYPE html><html><head>
 <link rel="stylesheet" href="../../styles.css">
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -9,7 +9,7 @@
 <div id="root"></div>
 <script type="text/babel">
 const NS = (()=>{for(const k of Object.getOwnPropertyNames(window)){try{const v=window[k];if(v&&typeof v==='object'&&typeof v.Resolve==='function'&&typeof v.Chart==='function')return v;}catch(e){}}return window;})();
-const {Resolve, ResolveBlock, Chart, Table, Progress, Card, Button} = NS;
+const {Resolve, ResolveBlock, Chart, Table, Progress, Card, Button, Stat, Timeline} = NS;
 const wave = Array.from({length:32},(_,i)=>40+30*Math.sin(i*0.5)+Math.random()*18);
 function Demo(){
   const [loading, setLoading] = React.useState(true);
@@ -19,12 +19,22 @@ function Demo(){
       <span style={{fontFamily:'var(--font-mono)', fontSize:'var(--text-xs)', letterSpacing:'var(--track-wide)', textTransform:'uppercase', color:'var(--text-faint)'}}>Loading cycles every 3.6s — structure never moves</span>
     </div>
     <div style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:12}}>
-      <Card title="Revenue"><div style={{fontFamily:'var(--font-mono)', fontSize:'var(--text-xl)'}}><Resolve loading={loading} format={v=>'$'+v.toLocaleString()}>{48210}</Resolve></div></Card>
+      <Stat label="Revenue" value={48210} format={v=>'$'+v.toLocaleString('en-US')} delta="12.4%" up loading={loading}/>
       <Card title="Status"><div style={{fontSize:'var(--text-md)'}}><Resolve loading={loading}>All systems nominal</Resolve></div></Card>
       <Card title="Index rebuild"><Progress value={loading ? undefined : 62} label="shard 4/6"/></Card>
     </div>
     <Card title="Requests" meta="24h">
       <Chart data={wave} type="area" height={110} loading={loading}/>
+    </Card>
+    <Card title="Repositories created" meta="per year">
+      <Chart data={[2,9,24,11,5,3,2,1,1,2,1]} labels={['16','17','18','19','20','21','22','23','24','25','26']} type="bars" height={110} loading={loading}/>
+    </Card>
+    <Card title="Deploy history" meta="production">
+      <Timeline loading={loading} items={[
+        {meta:'14:03', title:'build 4821 verified', detail:'canary passed in 3 regions', tone:'ok'},
+        {meta:'13:58', title:'p95 breach · ap-south', detail:'auto-rollback armed', tone:'danger'},
+        {meta:'13:41', title:'build 4820 live', tone:'accent'},
+      ]}/>
     </Card>
     <Table loading={loading} columns={[
       {key:'svc', label:'Service'},

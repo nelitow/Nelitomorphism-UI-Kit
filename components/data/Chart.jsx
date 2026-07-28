@@ -6,11 +6,11 @@ const HUES = { accent: "oklch(0.82 0.15 195", accent2: "oklch(0.82 0.15 305", ok
  * Canvas chart with morph animation: while loading it draws live noise waves;
  * when data arrives the noise morphs into the real series. type: line | area | bars.
  */
-export function Chart({ data, series, type = "area", height = 120, loading = false, grid = true, style, ...rest }) {
+export function Chart({ data, series, type = "area", height = 120, loading = false, grid = true, labels, style, ...rest }) {
   const ref = React.useRef(null);
   const stateRef = React.useRef({ pts: null });
   const all = series || [{ data: data || [], tone: "accent" }];
-  const key = JSON.stringify(all.map(s => s.data)) + type + loading;
+  const key = JSON.stringify(all.map(s => s.data)) + type + loading + (labels ? labels.join() : "");
   React.useEffect(() => {
     const canvas = ref.current, ctx = canvas.getContext("2d");
     const dpr = Math.min(devicePixelRatio || 1, 2);
@@ -23,7 +23,9 @@ export function Chart({ data, series, type = "area", height = 120, loading = fal
     });
     ro.observe(canvas);
     const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; }); io.observe(canvas);
-    const N = Math.max(...all.map(s => s.data.length), 24);
+    const dataN = Math.max(0, ...all.map(s => s.data.length));
+    const N = dataN >= 2 ? dataN : 24;
+    const PB = labels && labels.length ? 13 : 0;
     const st = stateRef.current;
     if (!st.pts || st.pts.length !== all.length || st.pts[0].length !== N)
       st.pts = all.map(() => new Array(N).fill(0.5));
@@ -44,22 +46,31 @@ export function Chart({ data, series, type = "area", height = 120, loading = fal
       ctx.clearRect(0, 0, w, h);
       if (grid) {
         ctx.strokeStyle = "rgba(255,255,255,0.05)"; ctx.lineWidth = 1;
-        for (let g = 1; g < 4; g++) { const y = (h - 14) * g / 4 + 4; ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+        for (let g = 1; g < 4; g++) { const y = (h - 14 - PB) * g / 4 + 4; ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+      }
+      if (PB) {
+        ctx.fillStyle = "rgba(255,255,255,0.35)"; ctx.font = "9px ui-monospace, monospace";
+        const maxTicks = Math.max(2, Math.floor(w / 56)), stride = Math.ceil(labels.length / maxTicks);
+        for (let i = 0; i < labels.length; i += stride) {
+          const cx = labels.length === 1 ? w / 2 : (i / (labels.length - 1)) * w;
+          const txt = String(labels[i]), tw = ctx.measureText(txt).width;
+          ctx.fillText(txt, Math.max(0, Math.min(w - tw, cx - tw / 2)), h - 2);
+        }
       }
       all.forEach((s, si) => {
         const hue = HUES[s.tone || (si === 0 ? "accent" : "accent2")] || HUES.accent;
         const cur = st.pts[si];
         const X = (i) => (i / (N - 1)) * w;
-        const Y = (v) => 4 + (1 - Math.max(0, Math.min(1, v))) * (h - 18);
+        const Y = (v) => 4 + (1 - Math.max(0, Math.min(1, v))) * (h - 18 - PB);
         const alpha = loading ? 0.45 : 1;
         if (type === "bars") {
-          const bw = Math.max(2, w / N - 3);
+          const slot = w / N, bw = Math.max(2, slot - 3);
           for (let i = 0; i < N; i++) {
             const y = Y(cur[i]);
-            const gr = ctx.createLinearGradient(0, y, 0, h - 10);
+            const gr = ctx.createLinearGradient(0, y, 0, h - 10 - PB);
             gr.addColorStop(0, `${hue} / ${0.9 * alpha})`); gr.addColorStop(1, `${hue} / ${0.15 * alpha})`);
             ctx.fillStyle = gr;
-            ctx.beginPath(); ctx.roundRect(X(i) - bw / 2 + (i === 0 ? bw / 2 : 0), y, bw, h - 10 - y, 2); ctx.fill();
+            ctx.beginPath(); ctx.roundRect(i * slot + (slot - bw) / 2, y, bw, h - 10 - PB - y, 2); ctx.fill();
           }
         } else {
           ctx.beginPath();
@@ -67,7 +78,7 @@ export function Chart({ data, series, type = "area", height = 120, loading = fal
           if (type === "area") {
             const fill = ctx.createLinearGradient(0, 0, 0, h);
             fill.addColorStop(0, `${hue} / ${0.28 * alpha})`); fill.addColorStop(1, `${hue} / 0)`);
-            ctx.save(); ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); ctx.restore();
+            ctx.save(); ctx.lineTo(w, h - PB); ctx.lineTo(0, h - PB); ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); ctx.restore();
             ctx.beginPath();
             for (let i = 0; i < N; i++) i ? ctx.lineTo(X(i), Y(cur[i])) : ctx.moveTo(X(0), Y(cur[0]));
           }

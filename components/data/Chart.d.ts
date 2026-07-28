@@ -12,5 +12,7 @@ export interface ChartProps extends React.CanvasHTMLAttributes<HTMLCanvasElement
   /** While true, draws live noise waves in place; real data morphs in when it flips false */
   loading?: boolean;
   grid?: boolean;
+  /** X-axis tick labels, one per data point (auto-thinned) */
+  labels?: (string | number)[];
 }
 export declare function Chart(props: ChartProps): JSX.Element;
