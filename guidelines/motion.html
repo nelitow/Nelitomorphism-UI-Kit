@@ -1,0 +1,19 @@
+<!-- @dsCard group="Motion" viewport="700x140" subtitle="Spring vs out easing · 40ms stagger cascade" name="Motion" -->
+<!DOCTYPE html><html><head><link rel="stylesheet" href="../styles.css">
+<style>
+@keyframes slide{0%,15%{transform:translateX(0)}55%,85%{transform:translateX(220px)}100%{transform:translateX(0)}}
+@keyframes rise{0%,10%{opacity:0;transform:translateY(10px)}30%,80%{opacity:1;transform:none}95%,100%{opacity:0;transform:translateY(10px)}}
+</style></head>
+<body style="display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px;background:var(--bg-0);font-family:var(--font-mono);font-size:10px;color:var(--fg-3)">
+<div style="display:grid;gap:10px">
+<div>--ease-spring<div style="margin-top:4px;width:16px;height:16px;border-radius:4px;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:slide 2.6s var(--ease-spring) infinite"></div></div>
+<div>--ease-out<div style="margin-top:4px;width:16px;height:16px;border-radius:4px;background:var(--accent-2);box-shadow:0 0 8px var(--accent-2);animation:slide 2.6s var(--ease-out) infinite"></div></div>
+</div>
+<div>stagger 40ms
+<div style="display:grid;gap:5px;margin-top:6px">
+<div style="height:14px;border-radius:4px;background:var(--bg-3);border:1px solid var(--edge-1);animation:rise 2.6s var(--ease-out) infinite"></div>
+<div style="height:14px;border-radius:4px;background:var(--bg-3);border:1px solid var(--edge-1);animation:rise 2.6s var(--ease-out) 0.04s infinite"></div>
+<div style="height:14px;border-radius:4px;background:var(--bg-3);border:1px solid var(--edge-1);animation:rise 2.6s var(--ease-out) 0.08s infinite"></div>
+<div style="height:14px;border-radius:4px;background:var(--bg-3);border:1px solid var(--edge-1);animation:rise 2.6s var(--ease-out) 0.12s infinite"></div>
+</div></div>
+</body></html>

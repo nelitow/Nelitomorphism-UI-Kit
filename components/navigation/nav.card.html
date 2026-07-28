@@ -1,0 +1,39 @@
+<!-- @dsCard group="Components" viewport="700x420" subtitle="Sidebar · Topbar · Tabs — springy glowing markers" name="Navigation" -->
+<!DOCTYPE html><html><head>
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
+<script src="../../neli-loader.js"></script>
+</head><body style="background:var(--bg-0);margin:0">
+<div id="root"></div>
+<script type="text/babel">
+const NS = (()=>{for(const k of Object.getOwnPropertyNames(window)){try{const v=window[k];if(v&&typeof v==='object'&&typeof v.Sidebar==='function'&&typeof v.Tabs==='function')return v;}catch(e){}}return window;})();
+const {Sidebar, Topbar, Tabs, Badge, Button} = NS;
+function Demo(){
+  const [page, setPage] = React.useState('overview');
+  const [tab, setTab] = React.useState('all');
+  return <div style={{display:'flex', height:420, border:'1px solid var(--edge-1)', overflow:'hidden'}}>
+    <Sidebar value={page} onChange={setPage}
+      header={<span style={{fontFamily:'var(--font-mono)', fontWeight:600, letterSpacing:'var(--track-wide)', fontSize:'var(--text-sm)'}}>NELI<span style={{color:'var(--accent)'}}>·</span>OPS</span>}
+      items={[
+        {section:'Monitor'},
+        {id:'overview', label:'Overview', icon:'◆'},
+        {id:'events', label:'Events', icon:'≡', count:412},
+        {id:'traces', label:'Traces', icon:'⌁', badge:{label:'new', tone:'accent2'}},
+        {section:'Manage'},
+        {id:'deploys', label:'Deployments', icon:'▲'},
+        {id:'keys', label:'API keys', icon:'⚿'},
+      ]}
+      footer={<span style={{fontFamily:'var(--font-mono)', fontSize:10, color:'var(--text-faint)'}}>v2.4.0 · synced</span>}/>
+    <div style={{flex:1, display:'flex', flexDirection:'column', minWidth:0, background:'var(--bg-0)'}}>
+      <Topbar path={['acme','prod', page]} actions={<React.Fragment><Badge tone="ok" dot pulse>Live</Badge><Button size="sm" variant="primary">Deploy</Button></React.Fragment>}/>
+      <div style={{padding:'var(--sp-4)'}}>
+        <Tabs items={[{value:'all',label:'All',count:128},{value:'failed',label:'Failed',count:3},{value:'queued',label:'Queued',count:12}]} value={tab} onChange={setTab}/>
+        <div style={{padding:'var(--sp-4) 4px', fontSize:'var(--text-sm)', color:'var(--text-faint)', fontFamily:'var(--font-mono)'}}>{page} / {tab}</div>
+      </div>
+    </div>
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
+</script></body></html>

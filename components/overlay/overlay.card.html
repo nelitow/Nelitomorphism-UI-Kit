@@ -1,0 +1,43 @@
+<!-- @dsCard group="Components" viewport="700x480" subtitle="Dialog · Toast · Tooltip · CommandPalette (⌘K)" name="Overlay" -->
+<!DOCTYPE html><html><head>
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
+<script src="../../neli-loader.js"></script>
+</head><body style="background:var(--bg-0);margin:0;padding:16px">
+<div id="root"></div>
+<script type="text/babel">
+const NS = (()=>{for(const k of Object.getOwnPropertyNames(window)){try{const v=window[k];if(v&&typeof v==='object'&&typeof v.Dialog==='function'&&typeof v.Tooltip==='function')return v;}catch(e){}}return window;})();
+const {Dialog, ToastStack, toast, Tooltip, CommandPalette, Button, Badge} = NS;
+function Demo(){
+  const [dlg, setDlg] = React.useState(false);
+  const [pal, setPal] = React.useState(false);
+  return <div style={{display:'grid', gap:16, justifyItems:'start'}}>
+    <div style={{display:'flex', gap:10, flexWrap:'wrap'}}>
+      <Button variant="primary" onClick={()=>setDlg(true)}>Open dialog</Button>
+      <Button onClick={()=>toast('Deploy complete', {tone:'ok', detail:'build 4821 → production'})}>Toast ok</Button>
+      <Button onClick={()=>toast('Quota at 91%', {tone:'warn', detail:'events ingest · project acme'})}>Toast warn</Button>
+      <Button onClick={()=>setPal(true)}>Command palette</Button>
+    </div>
+    <div style={{display:'flex', gap:16, alignItems:'center'}}>
+      <Tooltip content="p95 · last 24h"><Badge tone="warn" dot>142ms</Badge></Tooltip>
+      <Tooltip content="3 replicas · us-east" side="right"><Badge tone="ok" dot pulse>gateway</Badge></Tooltip>
+      <span style={{fontFamily:'var(--font-mono)', fontSize:'var(--text-xs)', color:'var(--text-faint)'}}>hover the badges · ⌘K also opens the palette</span>
+    </div>
+    <Dialog open={dlg} title="Revoke key" onClose={()=>setDlg(false)}
+      footer={<React.Fragment><Button variant="ghost" onClick={()=>setDlg(false)}>Cancel</Button><Button variant="danger" onClick={()=>{setDlg(false);toast('Key revoked',{tone:'danger', detail:'sk-…9f2ab is now inert'})}}>Revoke</Button></React.Fragment>}>
+      <div style={{fontSize:'var(--text-sm)', color:'var(--text-dim)'}}>This action is immediate. Services using sk-…9f2ab will fail on their next request.</div>
+    </Dialog>
+    <CommandPalette open={pal} onClose={()=>setPal(false)} commands={[
+      {group:'nav', label:'Go to Overview'},
+      {group:'nav', label:'Go to Deployments'},
+      {group:'run', label:'Trigger deploy', hint:'⌘D', action:()=>toast('Deploy queued',{tone:'accent'})},
+      {group:'run', label:'Rotate API key'},
+      {group:'view', label:'Toggle dense rows'},
+    ]} onRun={c=>toast(c.label,{tone:'accent'})}/>
+    <ToastStack/>
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
+</script></body></html>

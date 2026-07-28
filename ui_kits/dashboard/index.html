@@ -1,0 +1,172 @@
+<!-- @dsCard group="Dashboard" viewport="1440x820" subtitle="Analytics dashboard — all components composed; data materializes in place" name="Analytics dashboard" -->
+<!-- @startingPoint section="Screens" subtitle="Dark analytics dashboard — Nelitomorphism showcase" viewport="1440x820" -->
+<!DOCTYPE html><html><head>
+<meta charset="utf-8"><title>Neli·Ops — Overview</title>
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
+<script src="../../neli-loader.js"></script>
+</head><body style="background:var(--bg-0);margin:0">
+<div id="root"></div>
+<script type="text/babel">
+const NS = (()=>{for(const k of Object.getOwnPropertyNames(window)){try{const v=window[k];if(v&&typeof v==='object'&&typeof v.Sidebar==='function'&&typeof v.Chart==='function')return v;}catch(e){}}return window;})();
+const {Sidebar, Topbar, Tabs, Badge, Button, Card, Table, Chart, Progress, Resolve, ResolveBlock, Select, Dialog, ToastStack, toast, Tooltip, CommandPalette, Input} = NS;
+
+const REQ = Array.from({length:48},(_,i)=>52+34*Math.sin(i*0.31)+14*Math.sin(i*0.83)+Math.random()*12);
+const ERR = Array.from({length:48},(_,i)=>18+9*Math.sin(i*0.42+2)+Math.random()*7);
+const LAT = Array.from({length:24},(_,i)=>30+22*Math.sin(i*0.5+1)+Math.random()*20);
+const ROWS = [
+  {svc:'gateway', region:'us-east', p95:'42ms', rps:'612', err:'0.01%', status:'ok'},
+  {svc:'auth', region:'us-east', p95:'88ms', rps:'188', err:'0.00%', status:'ok'},
+  {svc:'billing', region:'eu-west', p95:'142ms', rps:'96', err:'0.32%', status:'warn'},
+  {svc:'ingest', region:'us-east', p95:'61ms', rps:'344', err:'0.04%', status:'ok'},
+  {svc:'search', region:'ap-south', p95:'210ms', rps:'71', err:'1.20%', status:'danger'},
+  {svc:'webhooks', region:'eu-west', p95:'55ms', rps:'129', err:'0.02%', status:'ok'},
+];
+
+function Kpi({label, value, delta, up, loading, format}){
+  return <Card title={label} glow style={{minWidth:0}}>
+    <div style={{fontFamily:'var(--font-mono)', fontSize:'var(--text-xl)', fontWeight:600, whiteSpace:'nowrap'}}>
+      <Resolve loading={loading} format={format}>{value}</Resolve>
+    </div>
+    <div style={{fontFamily:'var(--font-mono)', fontSize:'var(--text-xs)', color: up ? 'var(--ok)' : 'var(--danger)', marginTop:2}}>
+      {up ? '↑' : '↓'} <Resolve loading={loading}>{delta}</Resolve> <span style={{color:'var(--text-faint)'}}>vs prev 24h</span>
+    </div>
+  </Card>;
+}
+
+function App(){
+  const [page, setPage] = React.useState('overview');
+  const [tab, setTab] = React.useState('all');
+  const [range, setRange] = React.useState('24h');
+  const [loading, setLoading] = React.useState(true);
+  const [deploying, setDeploying] = React.useState(false);
+  const [deployPct, setDeployPct] = React.useState(0);
+  const [dlg, setDlg] = React.useState(false);
+  React.useEffect(()=>{ const t = setTimeout(()=>setLoading(false), 1400); return ()=>clearTimeout(t); },[]);
+  const reload = (r)=>{ setRange(r); setLoading(true); setTimeout(()=>setLoading(false), 1200); };
+  const deploy = ()=>{
+    if (deploying) return;
+    setDlg(false); setDeploying(true); setDeployPct(0);
+    toast('Deploy queued', {tone:'accent', detail:'build 4822 → production'});
+    const iv = setInterval(()=>setDeployPct(p=>{
+      const n = p + 2 + Math.random()*5;
+      if (n >= 100){ clearInterval(iv); setDeploying(false); toast('Deploy complete', {tone:'ok', detail:'build 4822 live in 3 regions'}); return 100; }
+      return n;
+    }), 120);
+  };
+  const rows = tab==='all' ? ROWS : ROWS.filter(r => tab==='degraded' ? r.status!=='ok' : r.status==='ok');
+  return <div style={{display:'flex', height:'100vh', minHeight:640, overflow:'hidden'}}>
+    <Sidebar value={page} onChange={setPage}
+      header={<span style={{fontFamily:'var(--font-mono)', fontWeight:600, letterSpacing:'var(--track-wide)', fontSize:'var(--text-sm)'}}>NELI<span style={{color:'var(--accent)'}}>·</span>OPS</span>}
+      items={[
+        {section:'Monitor'},
+        {id:'overview', label:'Overview', icon:'◆'},
+        {id:'events', label:'Events', icon:'≡', count:412},
+        {id:'traces', label:'Traces', icon:'⌁', badge:{label:'new', tone:'accent2'}},
+        {id:'alerts', label:'Alerts', icon:'▲', count:3},
+        {section:'Manage'},
+        {id:'deploys', label:'Deployments', icon:'⇪'},
+        {id:'keys', label:'API keys', icon:'⚿'},
+        {id:'settings', label:'Settings', icon:'⚙'},
+      ]}
+      footer={<span style={{fontFamily:'var(--font-mono)', fontSize:10, color:'var(--text-faint)'}}>v2.4.0 · ⌘K for commands</span>}/>
+    <main style={{flex:1, display:'flex', flexDirection:'column', minWidth:0}}>
+      <Topbar path={['acme','prod', page]}
+        center={<div style={{fontFamily:'var(--font-mono)', fontSize:'var(--text-xs)', color:'var(--text-faint)', border:'1px solid var(--edge-1)', borderRadius:'var(--r-1)', padding:'3px 12px', cursor:'pointer'}} onClick={()=>document.dispatchEvent(new KeyboardEvent('keydown',{key:'k',metaKey:true}))}>Search or run a command… <kbd style={{marginLeft:8, border:'1px solid var(--edge-1)', borderRadius:3, padding:'0 4px'}}>⌘K</kbd></div>}
+        actions={<React.Fragment>
+          <Badge tone={deploying ? 'warn' : 'ok'} dot pulse>{deploying ? 'Deploying' : 'Live'}</Badge>
+          <Button size="sm" variant="primary" loading={deploying} onClick={()=>setDlg(true)}>Deploy</Button>
+        </React.Fragment>}/>
+      <div style={{flex:1, overflow:'auto', padding:'var(--sp-4)', display:'grid', gap:'var(--sp-3)', gridTemplateRows:'auto auto 1fr', minHeight:0}}>
+        <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', gap:'var(--sp-3)', flexWrap:'wrap'}}>
+          <div>
+            <div style={{fontSize:'var(--text-lg)', fontWeight:600, letterSpacing:'var(--track-tight)'}}>Production overview</div>
+            <div style={{fontFamily:'var(--font-mono)', fontSize:'var(--text-xs)', color:'var(--text-faint)'}}><Resolve loading={loading}>6 services · 3 regions · all data live</Resolve></div>
+          </div>
+          <div style={{display:'flex', gap:8, alignItems:'end'}}>
+            {deploying && <Progress value={deployPct} label="build 4822" style={{width:160}}/>}
+            <Select options={["1h","24h","7d","30d"]} value={range} onChange={reload} style={{width:90}}/>
+          </div>
+        </div>
+        <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(170px, 1fr))', gap:'var(--sp-3)'}}>
+          <Kpi label="Requests" value={2841203} loading={loading} delta="8.2%" up format={v=>(v/1e6).toFixed(2)+'M'}/>
+          <Kpi label="Revenue" value={48210} loading={loading} delta="12.4%" up format={v=>'$'+v.toLocaleString('en-US')}/>
+          <Kpi label="P95 latency" value={86} loading={loading} delta="4.1%" up={false} format={v=>v+'ms'}/>
+          <Kpi label="Error rate" value={0.14} loading={loading} delta="0.03pt" up format={v=>v.toFixed(2)+'%'}/>
+          <Kpi label="Active users" value={18342} loading={loading} delta="2.9%" up format={v=>v.toLocaleString('en-US')}/>
+        </div>
+        <div style={{display:'grid', gridTemplateColumns:'minmax(0, 1.7fr) minmax(0, 1fr)', gap:'var(--sp-3)', minHeight:0, alignItems:'start'}}>
+          <div style={{display:'grid', gap:'var(--sp-3)', minWidth:0}}>
+            <Card title="Requests vs errors" meta={range} glow>
+              <Chart series={[{data:REQ},{data:ERR, tone:'danger'}]} type="area" height={150} loading={loading}/>
+              <div style={{display:'flex', gap:14, marginTop:8, fontFamily:'var(--font-mono)', fontSize:10, color:'var(--text-faint)'}}>
+                <span><span style={{color:'var(--accent)'}}>■</span> requests</span>
+                <span><span style={{color:'var(--danger)'}}>■</span> errors</span>
+              </div>
+            </Card>
+            <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', gap:12}}>
+              <Tabs items={[{value:'all',label:'All services',count:6},{value:'healthy',label:'Healthy',count:4},{value:'degraded',label:'Degraded',count:2}]} value={tab} onChange={setTab}/>
+            </div>
+            <Table loading={loading} loadingRows={6} onRowClick={r=>toast('Opening '+r.svc, {tone:'accent', detail:r.region+' · p95 '+r.p95})}
+              columns={[
+                {key:'svc', label:'Service'},
+                {key:'region', label:'Region', mono:true},
+                {key:'rps', label:'RPS', align:'right', mono:true},
+                {key:'p95', label:'P95', align:'right', mono:true},
+                {key:'err', label:'Errors', align:'right', mono:true},
+                {key:'status', label:'Status', align:'right', render:(v)=><Badge tone={v==='ok'?'ok':v==='warn'?'warn':'danger'} dot pulse={v!=='ok'}>{v==='ok'?'nominal':v==='warn'?'degraded':'failing'}</Badge>},
+              ]} rows={rows}/>
+          </div>
+          <div style={{display:'grid', gap:'var(--sp-3)', minWidth:0}}>
+            <Card material glow>
+              <div style={{fontFamily:'var(--font-mono)', fontSize:'var(--text-xs)', letterSpacing:'var(--track-wide)', textTransform:'uppercase', color:'var(--text-dim)'}}>Edge capacity</div>
+              <div style={{fontFamily:'var(--font-mono)', fontSize:'var(--text-display)', fontWeight:600, margin:'6px 0 2px'}}><Resolve loading={loading} format={v=>v+'%'}>{71}</Resolve></div>
+              <div style={{fontSize:'var(--text-xs)', color:'var(--text-dim)'}}>Headroom before autoscale triggers.</div>
+              <Progress value={loading ? undefined : 71} showValue={false} style={{marginTop:12}}/>
+            </Card>
+            <Card title="Latency by region" meta="p95">
+              <ResolveBlock loading={loading}><Chart data={LAT} type="bars" height={110} loading={loading}/></ResolveBlock>
+              <div style={{display:'grid', gap:8, marginTop:12}}>
+                {[['us-east','42ms','ok'],['eu-west','88ms','ok'],['ap-south','210ms','danger']].map(([r,v,t])=>
+                  <div key={r} style={{display:'flex', justifyContent:'space-between', fontFamily:'var(--font-mono)', fontSize:'var(--text-xs)'}}>
+                    <span style={{color:'var(--text-dim)'}}>{r}</span>
+                    <span style={{color: t==='ok' ? 'var(--text-body)' : 'var(--danger)'}}><Resolve loading={loading}>{v}</Resolve></span>
+                  </div>)}
+              </div>
+            </Card>
+            <Card title="Live feed" meta="streaming">
+              <div style={{display:'grid', gap:7, fontFamily:'var(--font-mono)', fontSize:'var(--text-xs)'}}>
+                {[['14:03:12','deploy 4821 verified','ok'],['14:02:58','search p95 breach · ap-south','danger'],['14:01:40','autoscale +2 · ingest','accent'],['13:59:03','key rotated · sk-…9f2ab','accent-2']].map(([t,m,tone],i)=>
+                  <div key={i} style={{display:'flex', gap:10, alignItems:'baseline', minWidth:0}}>
+                    <span style={{color:'var(--text-faint)'}}>{t}</span>
+                    <span style={{width:5, height:5, borderRadius:'50%', background:`var(--${tone})`, boxShadow:`0 0 6px var(--${tone})`, flexShrink:0, alignSelf:'center'}}></span>
+                    <span style={{color:'var(--text-dim)', flex:1, minWidth:0, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}><Resolve loading={loading}>{m}</Resolve></span>
+                  </div>)}
+              </div>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </main>
+    <Dialog open={dlg} title="Deploy to production" onClose={()=>setDlg(false)}
+      footer={<React.Fragment><Button variant="ghost" onClick={()=>setDlg(false)}>Cancel</Button><Button variant="primary" onClick={deploy}>Deploy build 4822</Button></React.Fragment>}>
+      <div style={{display:'grid', gap:14}}>
+        <div style={{fontSize:'var(--text-sm)', color:'var(--text-dim)'}}>Rolls out to 3 regions with automatic canary verification. Rollback is instant.</div>
+        <Input label="Release note" placeholder="Optional — shown in the live feed"/>
+      </div>
+    </Dialog>
+    <CommandPalette commands={[
+      {group:'nav', label:'Go to Overview', action:()=>setPage('overview')},
+      {group:'nav', label:'Go to Deployments', action:()=>setPage('deploys')},
+      {group:'nav', label:'Go to API keys', action:()=>setPage('keys')},
+      {group:'run', label:'Trigger deploy', hint:'⌘D', action:deploy},
+      {group:'run', label:'Reload range', action:()=>reload(range)},
+      {group:'view', label:'Show degraded services', action:()=>setTab('degraded')},
+    ]}/>
+    <ToastStack/>
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script></body></html>

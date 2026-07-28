@@ -1,0 +1,24 @@
+{
+  "name": "nelitomorphism",
+  "version": "0.1.0",
+  "description": "Highly opinionated, dark-only, computer-native React UI kit. Structure is never loading.",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./styles.css": "./styles.css",
+    "./tokens/*": "./tokens/*"
+  },
+  "files": ["index.js", "styles.css", "tokens", "components"],
+  "sideEffects": ["*.css"],
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nelitow/nelitomorphism.git"
+  },
+  "keywords": ["react", "ui-kit", "design-system", "dark", "webgl"],
+  "license": "MIT"
+}

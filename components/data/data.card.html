@@ -1,0 +1,41 @@
+<!-- @dsCard group="Components" viewport="700x560" subtitle="Resolve loader · Chart morph · Table · Progress" name="Data" -->
+<!DOCTYPE html><html><head>
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
+<script src="../../neli-loader.js"></script>
+</head><body style="background:var(--bg-0);margin:0;padding:16px">
+<div id="root"></div>
+<script type="text/babel">
+const NS = (()=>{for(const k of Object.getOwnPropertyNames(window)){try{const v=window[k];if(v&&typeof v==='object'&&typeof v.Resolve==='function'&&typeof v.Chart==='function')return v;}catch(e){}}return window;})();
+const {Resolve, ResolveBlock, Chart, Table, Progress, Card, Button} = NS;
+const wave = Array.from({length:32},(_,i)=>40+30*Math.sin(i*0.5)+Math.random()*18);
+function Demo(){
+  const [loading, setLoading] = React.useState(true);
+  React.useEffect(()=>{ const t = setInterval(()=>setLoading(l=>!l), 3600); return ()=>clearInterval(t); },[]);
+  return <div style={{display:'grid', gap:14}}>
+    <div style={{display:'flex', alignItems:'baseline', gap:16}}>
+      <span style={{fontFamily:'var(--font-mono)', fontSize:'var(--text-xs)', letterSpacing:'var(--track-wide)', textTransform:'uppercase', color:'var(--text-faint)'}}>Loading cycles every 3.6s — structure never moves</span>
+    </div>
+    <div style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:12}}>
+      <Card title="Revenue"><div style={{fontFamily:'var(--font-mono)', fontSize:'var(--text-xl)'}}><Resolve loading={loading} format={v=>'$'+v.toLocaleString()}>{48210}</Resolve></div></Card>
+      <Card title="Status"><div style={{fontSize:'var(--text-md)'}}><Resolve loading={loading}>All systems nominal</Resolve></div></Card>
+      <Card title="Index rebuild"><Progress value={loading ? undefined : 62} label="shard 4/6"/></Card>
+    </div>
+    <Card title="Requests" meta="24h">
+      <Chart data={wave} type="area" height={110} loading={loading}/>
+    </Card>
+    <Table loading={loading} columns={[
+      {key:'svc', label:'Service'},
+      {key:'p95', label:'P95', align:'right', mono:true},
+      {key:'err', label:'Errors', align:'right', mono:true},
+    ]} rows={[
+      {svc:'gateway', p95:'42ms', err:'0.01%'},
+      {svc:'auth', p95:'88ms', err:'0.00%'},
+      {svc:'billing', p95:'142ms', err:'0.32%'},
+    ]}/>
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
+</script></body></html>

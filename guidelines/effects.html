@@ -1,0 +1,11 @@
+<!-- @dsCard group="Effects" viewport="700x150" subtitle="Glow · raise shadow · glass · scanline" name="Light & surfaces" -->
+<!DOCTYPE html><html><head><link rel="stylesheet" href="../styles.css"></head>
+<body style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:18px;background:var(--bg-0);font-family:var(--font-mono);font-size:10px;color:var(--fg-3)">
+<div style="height:100px;border-radius:var(--r-2);background:var(--bg-2);box-shadow:var(--glow-accent);display:grid;place-items:center">--glow-accent</div>
+<div style="height:100px;border-radius:var(--r-2);background:var(--bg-2);border:1px solid var(--edge-1);box-shadow:var(--shadow-raise);display:grid;place-items:center">--shadow-raise</div>
+<div style="position:relative;height:100px;border-radius:var(--r-2);overflow:hidden">
+<div style="position:absolute;inset:-8px;background:radial-gradient(circle at 30% 30%, oklch(0.5 0.14 195 / 0.7), transparent 60%),radial-gradient(circle at 70% 70%, oklch(0.5 0.14 305 / 0.7), transparent 60%)"></div>
+<div style="position:absolute;inset:0;background:var(--glass-bg);backdrop-filter:blur(var(--glass-blur));-webkit-backdrop-filter:blur(var(--glass-blur));border:1px solid var(--edge-2);border-radius:var(--r-2);display:grid;place-items:center">--glass-bg</div>
+</div>
+<div style="height:100px;border-radius:var(--r-2);background:var(--bg-2) ;border:1px solid var(--edge-1);position:relative;display:grid;place-items:center"><div style="position:absolute;inset:0;background:var(--scanline);border-radius:inherit"></div>--scanline</div>
+</body></html>

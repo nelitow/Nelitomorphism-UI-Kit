@@ -1,0 +1,45 @@
+<!-- @dsCard group="Components" viewport="700x400" subtitle="Button · Card · Badge — WebGL material, glow, press states" name="Core" -->
+<!DOCTYPE html><html><head>
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
+<script src="../../neli-loader.js"></script>
+</head><body style="background:var(--bg-0);margin:0;padding:16px">
+<div id="root"></div>
+<script type="text/babel">
+const NS = (()=>{for(const k of Object.getOwnPropertyNames(window)){try{const v=window[k];if(v&&typeof v==='object'&&typeof v.Button==='function'&&typeof v.Card==='function')return v;}catch(e){}}return window;})();
+const {Button, Card, Badge} = NS;
+function Demo(){
+  return <div style={{display:'grid', gap:16}}>
+    <div style={{display:'flex', gap:10, alignItems:'center', flexWrap:'wrap'}}>
+      <Button variant="primary">Deploy</Button>
+      <Button>Configure</Button>
+      <Button variant="ghost">Dismiss</Button>
+      <Button variant="danger" size="sm">Revoke</Button>
+      <Button loading>Syncing</Button>
+      <Button disabled>Locked</Button>
+      <Button variant="primary" size="lg">Launch environment</Button>
+    </div>
+    <div style={{display:'flex', gap:8, flexWrap:'wrap'}}>
+      <Badge tone="ok" dot pulse>Live</Badge>
+      <Badge tone="accent">v2.4.0</Badge>
+      <Badge tone="accent2">Beta</Badge>
+      <Badge tone="warn" dot>Degraded</Badge>
+      <Badge tone="danger">Failed</Badge>
+      <Badge>Archived</Badge>
+    </div>
+    <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
+      <Card title="Throughput" meta="synced 4s ago" glow>
+        <div style={{fontFamily:'var(--font-mono)', fontSize:'var(--text-xl)'}}>1,284 <span style={{fontSize:'var(--text-xs)', color:'var(--ok)'}}>↑ 8.2%</span></div>
+        <div style={{fontSize:'var(--text-xs)', color:'var(--text-faint)'}}>requests / second</div>
+      </Card>
+      <Card material glow>
+        <div style={{fontFamily:'var(--font-mono)', fontSize:'var(--text-xs)', letterSpacing:'var(--track-wide)', textTransform:'uppercase', color:'var(--text-dim)'}}>Hero card</div>
+        <div style={{fontSize:'var(--text-md)', fontWeight:600, marginTop:6}}>WebGL material — move the pointer</div>
+      </Card>
+    </div>
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
+</script></body></html>
