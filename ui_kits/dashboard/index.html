@@ -1,7 +1,8 @@
 <!-- @dsCard group="Dashboard" viewport="1440x820" subtitle="Analytics dashboard — all components composed; data materializes in place" name="Analytics dashboard" -->
 <!-- @startingPoint section="Screens" subtitle="Dark analytics dashboard — Nelitomorphism showcase" viewport="1440x820" -->
 <!DOCTYPE html><html><head>
-<meta charset="utf-8"><title>Neli·Ops — Overview</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Neli·Ops — Overview</title>
+<link rel="icon" href="data:,">
 <link rel="stylesheet" href="../../styles.css">
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -11,7 +12,7 @@
 <div id="root"></div>
 <script type="text/babel">
 const NS = (()=>{for(const k of Object.getOwnPropertyNames(window)){try{const v=window[k];if(v&&typeof v==='object'&&typeof v.Sidebar==='function'&&typeof v.Chart==='function')return v;}catch(e){}}return window;})();
-const {Sidebar, Topbar, Tabs, Badge, Button, Card, Table, Chart, Progress, Resolve, ResolveBlock, Select, Dialog, ToastStack, toast, Tooltip, CommandPalette, Input} = NS;
+const {Sidebar, Topbar, Tabs, Badge, Button, Card, Table, Chart, Progress, Resolve, ResolveBlock, Select, Dialog, ToastStack, toast, Tooltip, CommandPalette, Input, useBreakpoint} = NS;
 
 const REQ = Array.from({length:48},(_,i)=>52+34*Math.sin(i*0.31)+14*Math.sin(i*0.83)+Math.random()*12);
 const ERR = Array.from({length:48},(_,i)=>18+9*Math.sin(i*0.42+2)+Math.random()*7);
@@ -44,6 +45,7 @@ function App(){
   const [deploying, setDeploying] = React.useState(false);
   const [deployPct, setDeployPct] = React.useState(0);
   const [dlg, setDlg] = React.useState(false);
+  const {tight, compact, touch} = useBreakpoint();
   React.useEffect(()=>{ const t = setTimeout(()=>setLoading(false), 1400); return ()=>clearTimeout(t); },[]);
   const reload = (r)=>{ setRange(r); setLoading(true); setTimeout(()=>setLoading(false), 1200); };
   const deploy = ()=>{
@@ -57,7 +59,7 @@ function App(){
     }), 120);
   };
   const rows = tab==='all' ? ROWS : ROWS.filter(r => tab==='degraded' ? r.status!=='ok' : r.status==='ok');
-  return <div style={{display:'flex', height:'100vh', minHeight:640, overflow:'hidden'}}>
+  return <div style={{display:'flex', flexDirection:compact ? 'column' : 'row', height:'100dvh', minHeight:640, maxWidth:'100%', overflow:'hidden'}}>
     <Sidebar value={page} onChange={setPage}
       header={<span style={{fontFamily:'var(--font-mono)', fontWeight:600, letterSpacing:'var(--track-wide)', fontSize:'var(--text-sm)'}}>NELI<span style={{color:'var(--accent)'}}>·</span>OPS</span>}
       items={[
@@ -72,35 +74,35 @@ function App(){
         {id:'settings', label:'Settings', icon:'⚙'},
       ]}
       footer={<span style={{fontFamily:'var(--font-mono)', fontSize:10, color:'var(--text-faint)'}}>v2.4.0 · ⌘K for commands</span>}/>
-    <main style={{flex:1, display:'flex', flexDirection:'column', minWidth:0}}>
+    <main style={{flex:1, display:'flex', flexDirection:'column', minWidth:0, minHeight:0}}>
       <Topbar path={['acme','prod', page]}
-        center={<div style={{fontFamily:'var(--font-mono)', fontSize:'var(--text-xs)', color:'var(--text-faint)', border:'1px solid var(--edge-1)', borderRadius:'var(--r-1)', padding:'3px 12px', cursor:'pointer'}} onClick={()=>document.dispatchEvent(new KeyboardEvent('keydown',{key:'k',metaKey:true}))}>Search or run a command… <kbd style={{marginLeft:8, border:'1px solid var(--edge-1)', borderRadius:3, padding:'0 4px'}}>⌘K</kbd></div>}
+        center={<div style={{display:'flex', alignItems:'center', minHeight:touch ? 44 : 30, boxSizing:'border-box', fontFamily:'var(--font-mono)', fontSize:'var(--text-xs)', color:'var(--text-faint)', border:'1px solid var(--edge-1)', borderRadius:'var(--r-1)', padding:tight ? '0 10px' : '3px 12px', cursor:'pointer', whiteSpace:'nowrap'}} onClick={()=>document.dispatchEvent(new KeyboardEvent('keydown',{key:'k',metaKey:true}))}>{tight ? '⌘K' : <React.Fragment>Search or run a command… <kbd style={{marginLeft:8, border:'1px solid var(--edge-1)', borderRadius:3, padding:'0 4px'}}>⌘K</kbd></React.Fragment>}</div>}
         actions={<React.Fragment>
           <Badge tone={deploying ? 'warn' : 'ok'} dot pulse>{deploying ? 'Deploying' : 'Live'}</Badge>
           <Button size="sm" variant="primary" loading={deploying} onClick={()=>setDlg(true)}>Deploy</Button>
         </React.Fragment>}/>
-      <div style={{flex:1, overflow:'auto', padding:'var(--sp-4)', display:'grid', gap:'var(--sp-3)', gridTemplateRows:'auto auto 1fr', minHeight:0}}>
+      <div style={{flex:1, overflow:'auto', WebkitOverflowScrolling:'touch', padding:'var(--sp-4)', paddingBottom:'calc(var(--sp-4) + var(--safe-bottom))', display:'grid', gap:'var(--sp-3)', gridTemplateRows:'auto auto 1fr', minHeight:0, minWidth:0}}>
         <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', gap:'var(--sp-3)', flexWrap:'wrap'}}>
           <div>
             <div style={{fontSize:'var(--text-lg)', fontWeight:600, letterSpacing:'var(--track-tight)'}}>Production overview</div>
             <div style={{fontFamily:'var(--font-mono)', fontSize:'var(--text-xs)', color:'var(--text-faint)'}}><Resolve loading={loading}>6 services · 3 regions · all data live</Resolve></div>
           </div>
-          <div style={{display:'flex', gap:8, alignItems:'end'}}>
+          <div style={{display:'flex', gap:8, alignItems:'end', flexWrap:'wrap', justifyContent:'flex-end', minWidth:0}}>
             {deploying && <Progress value={deployPct} label="build 4822" style={{width:160}}/>}
             <Select options={["1h","24h","7d","30d"]} value={range} onChange={reload} style={{width:90}}/>
           </div>
         </div>
-        <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(170px, 1fr))', gap:'var(--sp-3)'}}>
+        <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(150px, 1fr))', gap:'var(--sp-3)', minWidth:0}}>
           <Kpi label="Requests" value={2841203} loading={loading} delta="8.2%" up format={v=>(v/1e6).toFixed(2)+'M'}/>
           <Kpi label="Revenue" value={48210} loading={loading} delta="12.4%" up format={v=>'$'+v.toLocaleString('en-US')}/>
           <Kpi label="P95 latency" value={86} loading={loading} delta="4.1%" up={false} format={v=>v+'ms'}/>
           <Kpi label="Error rate" value={0.14} loading={loading} delta="0.03pt" up format={v=>v.toFixed(2)+'%'}/>
           <Kpi label="Active users" value={18342} loading={loading} delta="2.9%" up format={v=>v.toLocaleString('en-US')}/>
         </div>
-        <div style={{display:'grid', gridTemplateColumns:'minmax(0, 1.7fr) minmax(0, 1fr)', gap:'var(--sp-3)', minHeight:0, alignItems:'start'}}>
+        <div style={{display:'grid', gridTemplateColumns:compact ? 'minmax(0, 1fr)' : 'minmax(0, 1.7fr) minmax(0, 1fr)', gap:'var(--sp-3)', minHeight:0, minWidth:0, alignItems:'start'}}>
           <div style={{display:'grid', gap:'var(--sp-3)', minWidth:0}}>
             <Card title="Requests vs errors" meta={range} glow>
-              <Chart series={[{data:REQ},{data:ERR, tone:'danger'}]} type="area" height={150} loading={loading}/>
+              <Chart series={[{data:REQ},{data:ERR, tone:'danger'}]} type="area" height={compact ? undefined : 150} loading={loading}/>
               <div style={{display:'flex', gap:14, marginTop:8, fontFamily:'var(--font-mono)', fontSize:10, color:'var(--text-faint)'}}>
                 <span><span style={{color:'var(--accent)'}}>■</span> requests</span>
                 <span><span style={{color:'var(--danger)'}}>■</span> errors</span>
@@ -127,7 +129,7 @@ function App(){
               <Progress value={loading ? undefined : 71} showValue={false} style={{marginTop:12}}/>
             </Card>
             <Card title="Latency by region" meta="p95">
-              <ResolveBlock loading={loading}><Chart data={LAT} type="bars" height={110} loading={loading}/></ResolveBlock>
+              <ResolveBlock loading={loading}><Chart data={LAT} type="bars" height={compact ? undefined : 110} loading={loading}/></ResolveBlock>
               <div style={{display:'grid', gap:8, marginTop:12}}>
                 {[['us-east','42ms','ok'],['eu-west','88ms','ok'],['ap-south','210ms','danger']].map(([r,v,t])=>
                   <div key={r} style={{display:'flex', justifyContent:'space-between', fontFamily:'var(--font-mono)', fontSize:'var(--text-xs)'}}>

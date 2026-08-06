@@ -5,4 +5,5 @@ export interface TooltipProps extends React.HTMLAttributes<HTMLSpanElement> {
   delay?: number;
   children: React.ReactNode;
 }
+/** Hover-only tooltip; coarse pointers render only the child. */
 export declare function Tooltip(props: TooltipProps): JSX.Element;

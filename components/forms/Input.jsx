@@ -1,9 +1,12 @@
 import React from "react";
+import { useBreakpoint, density } from "../core/useBreakpoint.js";
 
 /** Compact text input with animated focus underline + ring. */
 export function Input({ label, hint, error, mono = false, size = "md", style, inputStyle, ...rest }) {
   const [focus, setFocus] = React.useState(false);
-  const h = size === "lg" ? "var(--control-h-lg)" : "var(--control-h)";
+  const { touch } = useBreakpoint();
+  const d = density(touch);
+  const h = size === "lg" ? Math.max(d.control + 8, 38) : d.control;
   return (
     <label style={{ display: "grid", gap: 5, ...style }}>
       {label && <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", letterSpacing: "var(--track-wide)", textTransform: "uppercase", color: focus ? "var(--accent)" : "var(--text-dim)", transition: "color var(--dur-1) var(--ease-out)" }}>{label}</span>}
@@ -17,7 +20,7 @@ export function Input({ label, hint, error, mono = false, size = "md", style, in
             background: "var(--bg-1)", color: "var(--text-body)", outline: "none",
             border: `1px solid ${error ? "var(--danger)" : focus ? "var(--edge-focus)" : "var(--edge-1)"}`,
             boxShadow: focus ? "var(--focus-ring)" : "none",
-            fontFamily: mono ? "var(--font-mono)" : "var(--font-ui)", fontSize: "var(--text-sm)",
+            fontFamily: mono ? "var(--font-mono)" : "var(--font-ui)", fontSize: d.field,
             transition: "border-color var(--dur-1) var(--ease-out), box-shadow var(--dur-2) var(--ease-out)",
             ...inputStyle,
           }}

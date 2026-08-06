@@ -27,10 +27,10 @@ export function Timeline({ items = [], loading = false, style, ...rest }) {
             </div>
             <div style={{ paddingBottom: last ? 0 : "var(--sp-3)", minWidth: 0 }}>
               <div style={{ display: "flex", gap: 10, alignItems: "baseline", minWidth: 0 }}>
-                <span style={{ fontSize: "var(--text-sm)", fontWeight: 600, color: "var(--text-body)" }}><Resolve loading={loading}>{it.title}</Resolve></span>
+                <span style={{ minWidth: 0, fontSize: "var(--text-sm)", fontWeight: 600, color: "var(--text-body)", overflowWrap: "anywhere" }}><Resolve loading={loading}>{it.title}</Resolve></span>
                 {it.meta && <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: "var(--text-faint)", whiteSpace: "nowrap", marginLeft: "auto" }}>{it.meta}</span>}
               </div>
-              {it.detail && <div style={{ fontSize: "var(--text-xs)", color: "var(--text-dim)", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis" }}><Resolve loading={loading}>{it.detail}</Resolve></div>}
+              {it.detail && <div style={{ minWidth: 0, fontSize: "var(--text-xs)", color: "var(--text-dim)", marginTop: 2, overflowWrap: "anywhere" }}><Resolve loading={loading}>{it.detail}</Resolve></div>}
             </div>
           </div>
         );

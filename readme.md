@@ -9,7 +9,7 @@ Nelitomorphism refuses to imitate physical materials. It is what a computer does
 1. **Structure first** — a loading component is the finished component with resolving content.
 2. **Choreographed state** — every transition is intentional: spring easings, per-item stagger, directional motion.
 3. **Computer-native light** — glow, refraction, and scanline texture instead of fake leather and drop shadows pretending to be sunlight.
-4. **Compact & dense** — 30px controls, 13.5px body, 4px grid. Information-dense by default.
+4. **Compact & dense** — density adapts without abandoning the 4px grid: fine pointers use 30px controls and 13.5px body; coarse pointers use 44px hit areas and 16px fields so iOS never zooms.
 5. **No retro-compat, no a11y compromise constraints** — latest CSS (oklch, linear() springs, backdrop-filter), WebGL where it earns its cost (button/card materials).
 
 ## Content fundamentals
@@ -29,6 +29,7 @@ Nelitomorphism refuses to imitate physical materials. It is what a computer does
 - **Texture**: optional `--scanline` overlay on hero surfaces; WebGL iridescent refraction (see `components/webgl-material.js`) on primary buttons and hero cards.
 - **Motion**: `--ease-spring` (linear() spring) for enters, `--ease-out` for hovers, 120/260/480/900ms durations, 40ms stagger. Hover = lighten + hairline brighten; press = scale(0.97). Content materialize = per-character glyph resolve or count-up over `--dur-4`.
 - **Imagery**: none. Data, glyphs, and light are the imagery.
+- **Responsive**: components style themselves inline, so responsiveness is computed rather than expressed in media queries. Every component reads `useBreakpoint()` from `components/core/useBreakpoint.js` for `{tight, compact, wide, touch}`: `tight` is <560px, `compact` is <900px, `wide` is >=1280px, and `touch` is `(pointer: coarse)` independent of width. Below `compact`, Sidebar becomes a horizontal rail, Tables become stacked records, and two-column compositions collapse to one; below `tight`, Dialogs become bottom sheets and CommandPalette docks to the top. `--text-lg`, `--text-xl`, and `--text-display` are fluid `clamp()` tokens; `--safe-*` carries `env(safe-area-inset-*)`. Screens ship `<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">`.
 
 ## Iconography
 No brand icon set was provided. The kit uses **Lucide** (CDN, stroke 1.5) as a placeholder system — flagged as a substitution; swap in a proprietary set when one exists. No emoji, ever. Unicode arrows/glyphs (→, ↗, ◆) are allowed in copy as micro-icons.
@@ -38,7 +39,7 @@ No logo provided; render "NELITOMORPHISM" or "NELI" in Geist Mono 600, tracked w
 
 ## Index
 - `styles.css` → imports `tokens/` (colors, typography, spacing, motion, effects, fonts, base).
-- `components/` — core/ (Button, Card, Badge, Kbd, SectionLabel) · forms/ (Input, Select, Checkbox, Switch, Slider, DatePicker, FileUpload) · overlay/ (Dialog, Toast, Tooltip, CommandPalette) · data/ (Table, Chart, Progress, Resolve, Stat, Timeline) · navigation/ (Sidebar, Topbar, Tabs) · `webgl-material.js` (shader helper).
+- `components/` — core/ (Button, Card, Badge, Kbd, Chip, SectionLabel, useBreakpoint) · forms/ (Input, Select, Checkbox, Switch, Slider, Swatch, DatePicker, FileUpload) · overlay/ (Dialog, Toast, Tooltip, CommandPalette) · data/ (Table, Chart, Progress, Resolve, Stat, Timeline) · navigation/ (Sidebar, Topbar, Tabs) · `webgl-material.js` (shader helper).
 - `guidelines/` — foundation specimen cards.
 - `ui_kits/dashboard/` — analytics dashboard showcase.
 - `SKILL.md` — agent skill entry point.

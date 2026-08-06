@@ -3,7 +3,7 @@ Table — compact sortable data table; rows cascade in with 40ms stagger; loadin
 ```jsx
 <Table
   columns={[{key:'name',label:'Service'},{key:'p95',label:'P95',align:'right',mono:true}]}
-  rows={data} loading={isLoading} onRowClick={open}/>
+  rows={data} primaryKey="name" loading={isLoading} onRowClick={open}/>
 ```
 
-Set `mono: true` on numeric/id columns. Click a header to sort.
+Set `mono: true` on numeric/id columns. Click a header to sort. Below 900px, rows become stacked records and the column-label rail sorts; `primaryKey` selects the record title (first column by default).

@@ -1,17 +1,22 @@
 import React from "react";
 import { NeliMaterial } from "./NeliMaterial.jsx";
+import { useBreakpoint, density } from "./useBreakpoint.js";
 
 const SIZES = {
-  sm: { height: 24, padding: "0 10px", fontSize: "var(--text-xs)" },
-  md: { height: "var(--control-h)", padding: "0 12px", fontSize: "var(--text-sm)" },
-  lg: { height: "var(--control-h-lg)", padding: "0 18px", fontSize: "var(--text-base)" },
+  sm: { fineHeight: 26, finePadding: 10, fontSize: "var(--text-xs)" },
+  md: { fineHeight: 30, finePadding: 12, fontSize: "var(--text-sm)" },
+  lg: { fineHeight: 38, finePadding: 18, fontSize: "var(--text-base)" },
 };
 
 /** Nelitomorphism button. variant: primary | secondary | ghost | danger */
 export function Button({ variant = "secondary", size = "md", children, disabled, loading, onClick, style, ...rest }) {
   const [hover, setHover] = React.useState(false);
   const [down, setDown] = React.useState(false);
-  const s = SIZES[size] || SIZES.md;
+  const { touch } = useBreakpoint();
+  const d = density(touch);
+  const preset = SIZES[size] || SIZES.md;
+  const height = size === "sm" ? d.controlSm : size === "lg" ? Math.max(d.control + 8, 38) : d.control;
+  const s = { height, padding: `0 ${Math.round(preset.finePadding * height / preset.fineHeight)}px`, fontSize: preset.fontSize };
   const base = {
     position: "relative", overflow: "hidden", isolation: "isolate",
     display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8,

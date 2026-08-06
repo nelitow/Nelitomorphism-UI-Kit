@@ -1,10 +1,13 @@
 import React from "react";
+import { useBreakpoint, density } from "../core/useBreakpoint.js";
 
 /** Checkbox with animated check-path draw and glow when checked. */
 export function Checkbox({ label, checked = false, onChange, disabled, style, ...rest }) {
+  const { touch } = useBreakpoint();
+  const d = density(touch);
   return (
-    <label {...rest} style={{ display: "inline-flex", alignItems: "center", gap: 8, cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.45 : 1, userSelect: "none", ...style }}>
-      <span onClick={() => !disabled && onChange?.(!checked)} style={{
+    <label {...rest} onClick={(e) => { rest.onClick?.(e); if (!e.defaultPrevented && !disabled) onChange?.(!checked); }} style={{ display: "inline-flex", alignItems: "center", gap: 8, minHeight: touch ? d.control : undefined, padding: touch ? `${(d.control - 16) / 2}px 0` : undefined, cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.45 : 1, userSelect: "none", ...style }}>
+      <span style={{
         width: 16, height: 16, borderRadius: 4, display: "grid", placeItems: "center", flexShrink: 0,
         background: checked ? "var(--accent)" : "var(--bg-1)",
         border: `1px solid ${checked ? "var(--accent)" : "var(--edge-2)"}`,

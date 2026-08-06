@@ -1,4 +1,5 @@
 import React from "react";
+import { useBreakpoint } from "../core/useBreakpoint.js";
 
 /** Fire a toast from anywhere: toast("Deployed", {tone:"ok", detail:"build 4821 live"}) */
 export function toast(message, opts = {}) {
@@ -7,6 +8,7 @@ export function toast(message, opts = {}) {
 
 /** Mount once near the app root. Renders the stacking toast rail (bottom-right). */
 export function ToastStack({ style, ...rest }) {
+  const { tight } = useBreakpoint();
   const [items, setItems] = React.useState([]);
   React.useEffect(() => {
     if (!document.getElementById("neli-kf-toast")) {
@@ -26,7 +28,7 @@ export function ToastStack({ style, ...rest }) {
   }, []);
   const tones = { ok: "var(--ok)", warn: "var(--warn)", danger: "var(--danger)", accent: "var(--accent)" };
   return (
-    <div {...rest} style={{ position: "fixed", right: 16, bottom: 16, zIndex: 200, display: "grid", gap: 8, width: 300, ...style }}>
+    <div {...rest} style={{ position: "fixed", right: tight ? "calc(var(--sp-3) + var(--safe-right))" : "calc(var(--sp-4) + var(--safe-right))", bottom: "calc(var(--sp-4) + var(--safe-bottom))", left: tight ? "calc(var(--sp-3) + var(--safe-left))" : undefined, zIndex: 200, display: "grid", gap: 8, width: tight ? "auto" : 300, maxWidth: "100%", ...style }}>
       {items.map(t => {
         const c = tones[t.tone] || "var(--accent)";
         return (

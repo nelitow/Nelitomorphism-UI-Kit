@@ -12,6 +12,8 @@ export interface TableProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Renders real row structure with scrambling cells */
   loading?: boolean;
   loadingRows?: number;
+  /** Column key used as the compact record title; defaults to the first column. */
+  primaryKey?: string;
   onRowClick?: (row: any) => void;
 }
 export declare function Table(props: TableProps): JSX.Element;

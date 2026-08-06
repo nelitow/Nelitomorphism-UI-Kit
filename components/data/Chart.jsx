@@ -1,4 +1,5 @@
 import React from "react";
+import { useBreakpoint } from "../core/useBreakpoint.js";
 
 const HUES = { accent: "oklch(0.82 0.15 195", accent2: "oklch(0.82 0.15 305", ok: "oklch(0.8 0.15 160", warn: "oklch(0.82 0.15 85", danger: "oklch(0.72 0.19 25" };
 
@@ -6,7 +7,9 @@ const HUES = { accent: "oklch(0.82 0.15 195", accent2: "oklch(0.82 0.15 305", ok
  * Canvas chart with morph animation: while loading it draws live noise waves;
  * when data arrives the noise morphs into the real series. type: line | area | bars.
  */
-export function Chart({ data, series, type = "area", height = 120, loading = false, grid = true, labels, style, ...rest }) {
+export function Chart({ data, series, type = "area", height, loading = false, grid = true, labels, style, ...rest }) {
+  const { tight, wide } = useBreakpoint();
+  const chartHeight = height == null ? (tight ? 110 : wide ? 150 : 130) : (tight ? Math.max(110, height) : height);
   const ref = React.useRef(null);
   const stateRef = React.useRef({ pts: null });
   const all = series || [{ data: data || [], tone: "accent" }];
@@ -50,11 +53,15 @@ export function Chart({ data, series, type = "area", height = 120, loading = fal
       }
       if (PB) {
         ctx.fillStyle = "rgba(255,255,255,0.35)"; ctx.font = "9px ui-monospace, monospace";
-        const maxTicks = Math.max(2, Math.floor(w / 56)), stride = Math.ceil(labels.length / maxTicks);
-        for (let i = 0; i < labels.length; i += stride) {
+        let previousRight = -Infinity;
+        for (let i = 0; i < labels.length; i++) {
           const cx = labels.length === 1 ? w / 2 : (i / (labels.length - 1)) * w;
           const txt = String(labels[i]), tw = ctx.measureText(txt).width;
-          ctx.fillText(txt, Math.max(0, Math.min(w - tw, cx - tw / 2)), h - 2);
+          if (tw > w) continue;
+          const left = Math.max(0, Math.min(w - tw, cx - tw / 2));
+          if (left < previousRight + 4) continue;
+          ctx.fillText(txt, left, h - 2);
+          previousRight = left + tw;
         }
       }
       all.forEach((s, si) => {
@@ -91,5 +98,5 @@ export function Chart({ data, series, type = "area", height = 120, loading = fal
     raf = requestAnimationFrame(tick);
     return () => { cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); };
   }, [key]);
-  return <canvas {...rest} ref={ref} style={{ display: "block", width: "100%", height, ...style }} />;
+  return <canvas {...rest} ref={ref} style={{ display: "block", width: "100%", height: chartHeight, ...style }} />;
 }

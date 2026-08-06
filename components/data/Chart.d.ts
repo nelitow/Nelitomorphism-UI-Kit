@@ -8,6 +8,7 @@ export interface ChartProps extends React.CanvasHTMLAttributes<HTMLCanvasElement
   /** Multiple series */
   series?: ChartSeries[];
   type?: "line" | "area" | "bars";
+  /** Default: 150px wide, 130px standard, 110px tight; explicit values stay at least 110px tight. */
   height?: number;
   /** While true, draws live noise waves in place; real data morphs in when it flips false */
   loading?: boolean;

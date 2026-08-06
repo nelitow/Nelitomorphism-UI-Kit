@@ -1,7 +1,9 @@
 export interface TimelineItem {
+  /** Wraps at any point on narrow layouts. */
   title: string;
   /** Mono metadata (time, date, version) — right-aligned */
   meta?: string;
+  /** Wraps at any point on narrow layouts. */
   detail?: string;
   tone?: "accent" | "accent-2" | "ok" | "warn" | "danger" | "neutral";
 }

@@ -7,4 +7,4 @@
 ]}/>
 ```
 
-Vertical rail with glowing dots; entries stagger in. Content resolves in place.
+Vertical rail with glowing dots; entries stagger in. Content resolves in place and long titles or details wrap without shifting the rail.

@@ -6,9 +6,9 @@
   --text-sm: 12.5px;
   --text-base: 13.5px;
   --text-md: 15px;
-  --text-lg: 18px;
-  --text-xl: 24px;
-  --text-display: 34px;
+  --text-lg: clamp(16px, 3.6vw, 18px);
+  --text-xl: clamp(20px, 5vw, 24px);
+  --text-display: clamp(26px, 8vw, 34px);
   --leading-tight: 1.2;
   --leading-body: 1.5;
   --track-wide: 0.08em;   /* uppercase labels */

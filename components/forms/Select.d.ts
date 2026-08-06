@@ -1,3 +1,4 @@
+/** Custom select with a touch-scrollable, viewport-clamped popover. */
 export interface SelectOption { value: string; label: string; }
 export interface SelectProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
   label?: string;

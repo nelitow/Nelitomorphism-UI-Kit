@@ -9,5 +9,5 @@ export interface ToastOptions {
 export declare function toast(message: string, opts?: ToastOptions): void;
 
 export interface ToastStackProps extends React.HTMLAttributes<HTMLDivElement> {}
-/** Mount once near the app root */
+/** Mount once near the app root; the stack respects viewport gutters and safe areas. */
 export declare function ToastStack(props: ToastStackProps): JSX.Element;

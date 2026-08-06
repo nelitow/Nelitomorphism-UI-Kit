@@ -15,9 +15,9 @@ export function Progress({ value, max = 100, label, tone = "accent", showValue =
   return (
     <div {...rest} style={{ display: "grid", gap: 6, ...style }}>
       {(label || showValue) && (
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)" }}>
-          <span style={{ color: "var(--text-dim)", letterSpacing: "var(--track-wide)", textTransform: "uppercase" }}>{label}</span>
-          {showValue && !indeterminate && <span style={{ color: "var(--text-body)" }}><Resolve loading={false}>{Math.round(pct)}</Resolve>%</span>}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", minWidth: 0, gap: "var(--sp-2)", fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)" }}>
+          <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "var(--text-dim)", letterSpacing: "var(--track-wide)", textTransform: "uppercase" }}>{label}</span>
+          {showValue && !indeterminate && <span style={{ flex: "0 0 auto", color: "var(--text-body)" }}><Resolve loading={false}>{Math.round(pct)}</Resolve>%</span>}
         </div>
       )}
       <div style={{ position: "relative", height: 4, borderRadius: 999, background: "oklch(1 0 0 / 0.07)", overflow: "hidden" }}>

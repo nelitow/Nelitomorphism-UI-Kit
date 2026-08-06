@@ -8,5 +8,6 @@ What to look for:
 - ⌘K opens the command palette; sidebar/tabs markers spring between items.
 - Hero "Edge capacity" card runs the WebGL material.
 - Change the range select to re-trigger the materialize cycle.
+- The composition is fully responsive: sidebar rail, single-column stack, stacked table records, and bottom-sheet dialog; it is the reference for how app layouts consume `useBreakpoint()`.
 
 Single-file (`index.html`) using the compiled bundle; resize to any width — grids collapse gracefully.

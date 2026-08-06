@@ -18,4 +18,5 @@ export interface CommandPaletteProps extends React.HTMLAttributes<HTMLDivElement
   hotkey?: string;
   placeholder?: string;
 }
+/** Responsive command palette; touch screens dock it above the keyboard and hide key hints. */
 export declare function CommandPalette(props: CommandPaletteProps): JSX.Element;

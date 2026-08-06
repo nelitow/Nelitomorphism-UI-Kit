@@ -5,4 +5,4 @@
 <Stat label="P95 latency" value={86} format={v=>v+'ms'} delta="4.1%" up={false} hint="vs prev 24h"/>
 ```
 
-The dashboard KPI primitive. Numbers count up via Resolve; structure never loads.
+The dashboard KPI primitive. Numbers count up via Resolve; structure never loads. Tight layouts use fluid metric sizing and truncate delta and hint text.

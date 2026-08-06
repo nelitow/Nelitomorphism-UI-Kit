@@ -1,0 +1,77 @@
+<!-- @dsCard group="Foundations" viewport="900x620" subtitle="Computed breakpoints · touch density · fluid type and safe areas" name="Responsive" -->
+<!-- @startingPoint section="Foundations" subtitle="Responsive computation — breakpoints, touch density, fluid type and safe areas" viewport="900x620" -->
+<!DOCTYPE html><html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="../styles.css">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
+<script src="../neli-loader.js"></script>
+</head><body style="background:var(--bg-0);margin:0;padding:16px">
+<div id="root"></div>
+<script type="text/babel">
+const NS = (()=>{for(const k of Object.getOwnPropertyNames(window)){try{const v=window[k];if(v&&typeof v==='object'&&typeof v.useBreakpoint==='function'&&typeof v.Button==='function')return v;}catch(e){}}return window;})();
+const {useBreakpoint, density, Button, Chip, Switch, Slider} = NS;
+const micro = {fontFamily:'var(--font-mono)', fontSize:'var(--text-xs)', letterSpacing:'var(--track-wide)', textTransform:'uppercase', color:'var(--text-faint)'};
+function MeasuredControl({name, children}){
+  const ref = React.useRef(null);
+  const [height, setHeight] = React.useState(0);
+  React.useLayoutEffect(()=>{
+    const measure = ()=>{
+      const next = Math.round(ref.current?.getBoundingClientRect().height || 0);
+      setHeight(current=>current===next ? current : next);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    if(ref.current) observer.observe(ref.current);
+    return ()=>observer.disconnect();
+  }, []);
+  return <div style={{display:'grid', gridTemplateColumns:'minmax(0, 1fr) auto', alignItems:'center', gap:12, minWidth:0, padding:'var(--sp-3)', border:'1px solid var(--edge-1)', borderRadius:'var(--r-2)', background:'var(--bg-1)'}}>
+    <div ref={ref} style={{minWidth:0}}>{children}</div>
+    <span style={micro}>{name} · {height}px</span>
+  </div>;
+}
+function Flag({name, active}){
+  return <div style={{display:'flex', justifyContent:'space-between', gap:12, padding:'8px 10px', border:'1px solid var(--edge-1)', borderRadius:'var(--r-1)', background:active ? 'var(--accent-dim)' : 'var(--bg-1)'}}>
+    <span style={micro}>{name}</span><span style={{...micro, color:active ? 'var(--accent)' : 'var(--text-faint)'}}>{active ? 'true' : 'false'}</span>
+  </div>;
+}
+function Demo(){
+  const flags = useBreakpoint();
+  const values = density(flags.touch);
+  const [enabled, setEnabled] = React.useState(true);
+  const [value, setValue] = React.useState(56);
+  return <div style={{display:'grid', gap:16, maxWidth:900}}>
+    <section style={{display:'grid', gap:8}}>
+      <div style={micro}>Live computed viewport</div>
+      <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(120px, 1fr))', gap:8}}>
+        {Object.entries(flags).map(([name, active])=><Flag key={name} name={name} active={active}/>)}</div>
+      <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(120px, 1fr))', gap:8}}>
+        {Object.entries(values).map(([name, size])=><div key={name} style={{padding:'8px 10px', border:'1px solid var(--edge-1)', borderRadius:'var(--r-1)', background:'var(--bg-1)'}}><span style={micro}>{name}</span><span style={{marginLeft:8, fontFamily:'var(--font-mono)', fontSize:'var(--text-sm)', color:'var(--text)'}}>{size}px</span></div>)}</div>
+    </section>
+    <section style={{display:'grid', gap:8}}>
+      <div style={micro}>Breakpoints</div>
+      <div style={{display:'grid', gap:1, border:'1px solid var(--edge-1)', borderRadius:'var(--r-2)', overflow:'hidden'}}>
+        {[
+          ['TIGHT', '< 560px', 'Stack compositions. Dialogs sheet; CommandPalette top dock.'],
+          ['COMPACT', '< 900px', 'Sidebar rail, tables stacked, two columns become one.'],
+          ['WIDE', '≥ 1280px', 'Desktop composition may use its widest arrangement.'],
+          ['TOUCH', 'pointer: coarse', '44px hit areas, 16px fields; independent of width.'],
+        ].map(([name, range, detail])=><div key={name} style={{display:'grid', gridTemplateColumns:'88px 100px minmax(0, 1fr)', gap:12, padding:'10px 12px', background:'var(--bg-1)', borderTop:'1px solid var(--edge-1)'}}><span style={{...micro, color:'var(--accent)'}}>{name}</span><span style={micro}>{range}</span><span style={{fontSize:'var(--text-sm)', color:'var(--text-dim)'}}>{detail}</span></div>)}
+      </div>
+    </section>
+    <section style={{display:'grid', gap:8}}>
+      <div style={micro}>Live component geometry · fine vs coarse follows pointer</div>
+      <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(240px, 1fr))', gap:8}}>
+        <MeasuredControl name="Button"><Button variant="primary">Deploy</Button></MeasuredControl>
+        <MeasuredControl name="Chip"><Chip active>Production</Chip></MeasuredControl>
+        <MeasuredControl name="Switch"><Switch label="Auto-deploy" checked={enabled} onChange={setEnabled}/></MeasuredControl>
+        <MeasuredControl name="Slider"><Slider label="Rollout" value={value} onChange={setValue} unit="%"/></MeasuredControl>
+      </div>
+    </section>
+    <div style={{fontSize:'var(--text-sm)', color:'var(--text-faint)'}}>Fluid <span style={{fontFamily:'var(--font-mono)'}}>--text-lg / --text-xl / --text-display</span> uses clamp(). Safe-area padding comes from <span style={{fontFamily:'var(--font-mono)'}}>--safe-*</span>.</div>
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
+</script></body></html>

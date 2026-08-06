@@ -2,7 +2,7 @@ export interface ProgressProps extends React.HTMLAttributes<HTMLDivElement> {
   /** 0–max. Omit for indeterminate sweep. */
   value?: number;
   max?: number;
-  /** Uppercase mono label above the track */
+  /** Uppercase mono label above the track; truncates on narrow layouts. */
   label?: string;
   tone?: "accent" | "accent2" | "ok" | "warn" | "danger";
   showValue?: boolean;

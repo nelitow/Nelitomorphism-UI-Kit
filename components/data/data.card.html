@@ -1,5 +1,6 @@
 <!-- @dsCard group="Components" viewport="700x920" subtitle="Resolve loader · Stat · Chart · Timeline · Table · Progress" name="Data" -->
 <!DOCTYPE html><html><head>
+<meta charset="utf-8">
 <link rel="stylesheet" href="../../styles.css">
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -18,7 +19,7 @@ function Demo(){
     <div style={{display:'flex', alignItems:'baseline', gap:16}}>
       <span style={{fontFamily:'var(--font-mono)', fontSize:'var(--text-xs)', letterSpacing:'var(--track-wide)', textTransform:'uppercase', color:'var(--text-faint)'}}>Loading cycles every 3.6s — structure never moves</span>
     </div>
-    <div style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:12}}>
+    <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(260px, 1fr))', gap:12}}>
       <Stat label="Revenue" value={48210} format={v=>'$'+v.toLocaleString('en-US')} delta="12.4%" up loading={loading}/>
       <Card title="Status"><div style={{fontSize:'var(--text-md)'}}><Resolve loading={loading}>All systems nominal</Resolve></div></Card>
       <Card title="Index rebuild"><Progress value={loading ? undefined : 62} label="shard 4/6"/></Card>

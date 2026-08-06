@@ -1,10 +1,13 @@
 import React from "react";
+import { useBreakpoint, density } from "../core/useBreakpoint.js";
 
 /**
  * Command palette — ⌘K glass overlay with fuzzy filter and staggered results.
  * commands: [{id, label, group?, hint?, action?}]
  */
 export function CommandPalette({ commands = [], open, onClose, onRun, hotkey = "k", placeholder = "Type a command…", style, ...rest }) {
+  const { tight, touch } = useBreakpoint();
+  const sizes = density(touch);
   const controlled = open !== undefined;
   const [selfOpen, setSelfOpen] = React.useState(false);
   const isOpen = controlled ? open : selfOpen;
@@ -28,7 +31,7 @@ export function CommandPalette({ commands = [], open, onClose, onRun, hotkey = "
     document.addEventListener("keydown", on);
     return () => document.removeEventListener("keydown", on);
   });
-  React.useEffect(() => { if (isOpen) { setQ(""); setIdx(0); setTimeout(() => inputRef.current?.focus(), 30); } }, [isOpen]);
+  React.useEffect(() => { if (isOpen) { setQ(""); setIdx(0); setTimeout(() => inputRef.current?.focus({ preventScroll: true }), 30); } }, [isOpen]);
   React.useEffect(() => {
     if (document.getElementById("neli-kf-opt")) return;
     const el = document.createElement("style"); el.id = "neli-kf-opt";
@@ -38,30 +41,30 @@ export function CommandPalette({ commands = [], open, onClose, onRun, hotkey = "
   const run = (c) => { close(); (c.action || (() => onRun?.(c)))(); };
   if (!isOpen) return null;
   return (
-    <div onClick={close} style={{ position: "fixed", inset: 0, zIndex: 120, display: "grid", justifyItems: "center", alignItems: "start", paddingTop: "16vh",
+    <div onClick={close} style={{ position: "fixed", inset: 0, zIndex: 120, display: "grid", justifyItems: "center", alignItems: "start", paddingTop: tight ? 0 : "16vh",
       background: "oklch(0.08 0.01 250 / 0.55)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)" }}>
-      <div {...rest} onClick={(e) => e.stopPropagation()} style={{ width: "min(92vw, 560px)", overflow: "hidden",
+      <div {...rest} onClick={(e) => e.stopPropagation()} style={{ width: "min(560px, calc(100vw - 2 * var(--sp-4)))", maxHeight: "80dvh", marginTop: tight ? "var(--safe-top)" : 0, display: "flex", flexDirection: "column", overflow: "hidden",
         background: "var(--glass-bg)", backdropFilter: "blur(var(--glass-blur))", WebkitBackdropFilter: "blur(var(--glass-blur))",
         border: "1px solid var(--edge-2)", borderRadius: "var(--r-3)", boxShadow: "var(--shadow-overlay), var(--glow-accent)",
         animation: "neli-pop var(--dur-2) var(--ease-spring) both", ...style }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", borderBottom: "1px solid var(--edge-1)" }}>
+        <div style={{ flexShrink: 0, display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", borderBottom: "1px solid var(--edge-1)" }}>
           <span style={{ color: "var(--accent)", fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)" }}>❯</span>
           <input ref={inputRef} value={q} onChange={(e) => { setQ(e.target.value); setIdx(0); }} placeholder={placeholder}
-            style={{ flex: 1, background: "none", border: "none", outline: "none", color: "var(--text-body)", fontFamily: "var(--font-mono)", fontSize: "var(--text-base)" }} />
+            style={{ flex: 1, minWidth: 0, minHeight: touch ? sizes.control : undefined, background: "none", border: "none", outline: "none", color: "var(--text-body)", fontFamily: "var(--font-mono)", fontSize: touch ? `${sizes.field}px` : "var(--text-base)" }} />
           <kbd style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-faint)", border: "1px solid var(--edge-1)", borderRadius: 4, padding: "2px 5px" }}>esc</kbd>
         </div>
-        <div style={{ maxHeight: 320, overflow: "auto", padding: 6 }}>
+        <div style={{ flex: "1 1 auto", minHeight: 0, maxHeight: 320, overflowY: "auto", WebkitOverflowScrolling: "touch", padding: 6 }}>
           {filtered.length === 0 && <div style={{ padding: "18px 12px", fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: "var(--text-faint)" }}>No match. Try fewer characters.</div>}
           {filtered.map((c, i) => (
             <div key={c.id || c.label} onClick={() => run(c)} onPointerEnter={() => setIdx(i)}
-              style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "8px 10px", borderRadius: "var(--r-1)", cursor: "pointer",
+              style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, minHeight: sizes.control, padding: "8px 10px", borderRadius: "var(--r-1)", cursor: "pointer",
                 background: i === idx ? "var(--accent-dim)" : "transparent",
                 animation: `neli-opt var(--dur-2) var(--ease-out) both ${i * 20}ms`, transition: "background var(--dur-1) var(--ease-out)" }}>
-              <span style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
+              <span style={{ display: "flex", alignItems: "baseline", gap: 10, minWidth: 0 }}>
                 {c.group && <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "var(--track-wide)", textTransform: "uppercase", color: "var(--text-faint)" }}>{c.group}</span>}
                 <span style={{ fontSize: "var(--text-sm)", color: i === idx ? "var(--accent)" : "var(--text-body)" }}>{c.label}</span>
               </span>
-              {c.hint && <kbd style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-faint)", border: "1px solid var(--edge-1)", borderRadius: 4, padding: "1px 5px" }}>{c.hint}</kbd>}
+              {!touch && c.hint && <kbd style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-faint)", border: "1px solid var(--edge-1)", borderRadius: 4, padding: "1px 5px" }}>{c.hint}</kbd>}
             </div>
           ))}
         </div>

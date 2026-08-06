@@ -1,5 +1,6 @@
-<!-- @dsCard group="Components" viewport="700x400" subtitle="Button · Card · Badge · Kbd · SectionLabel — WebGL material, glow, press states" name="Core" -->
+<!-- @dsCard group="Components" viewport="700x400" subtitle="Button · Card · Badge · Kbd · Chip · SectionLabel — WebGL material, glow, press states" name="Core" -->
 <!DOCTYPE html><html><head>
+<meta charset="utf-8">
 <link rel="stylesheet" href="../../styles.css">
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -8,9 +9,10 @@
 </head><body style="background:var(--bg-0);margin:0;padding:16px">
 <div id="root"></div>
 <script type="text/babel">
-const NS = (()=>{for(const k of Object.getOwnPropertyNames(window)){try{const v=window[k];if(v&&typeof v==='object'&&typeof v.Button==='function'&&typeof v.Card==='function')return v;}catch(e){}}return window;})();
-const {Button, Card, Badge, Kbd, SectionLabel} = NS;
+const NS = (()=>{for(const k of Object.getOwnPropertyNames(window)){try{const v=window[k];if(v&&typeof v==='object'&&typeof v.Button==='function'&&typeof v.Card==='function'&&typeof v.Chip==='function')return v;}catch(e){}}return window;})();
+const {Button, Card, Badge, Kbd, Chip, SectionLabel} = NS;
 function Demo(){
+  const [preset, setPreset] = React.useState('4000K');
   return <div style={{display:'grid', gap:16}}>
     <div style={{display:'flex', gap:10, alignItems:'center', flexWrap:'wrap'}}>
       <Button variant="primary">Deploy</Button>
@@ -29,8 +31,14 @@ function Demo(){
       <Badge tone="danger">Failed</Badge>
       <Badge>Archived</Badge>
     </div>
+    <div style={{display:'flex', gap:6, flexWrap:'wrap', alignItems:'center'}}>
+      {['2200K','2700K','4000K','6500K'].map(p =>
+        <Chip key={p} active={preset===p} onClick={()=>setPreset(p)}>{p}</Chip>)}
+      <Chip tone="accent2" active>Traces</Chip>
+      <Chip disabled>Locked</Chip>
+    </div>
     <SectionLabel meta="synced 4s ago" rule>Surfaces · press <Kbd>⌘K</Kbd></SectionLabel>
-    <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
+    <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(260px, 1fr))', gap:12}}>
       <Card title="Throughput" meta="synced 4s ago" glow>
         <div style={{fontFamily:'var(--font-mono)', fontSize:'var(--text-xl)'}}>1,284 <span style={{fontSize:'var(--text-xs)', color:'var(--ok)'}}>↑ 8.2%</span></div>
         <div style={{fontSize:'var(--text-xs)', color:'var(--text-faint)'}}>requests / second</div>
